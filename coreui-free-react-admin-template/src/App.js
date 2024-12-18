@@ -55,8 +55,9 @@ const App = () => {
           <Route path="/404" name="Page 404" element={<Page404 />} />
           <Route path="/detailOrder/:id" name="Page Detail order" element={<DetailOrder />} />
           <Route path="/500" name="Page 500" element={<Page500 />} />
+          <Route path="/DetailTuyenXe/:id" name="Chi tiết tuyến xe" element={<DetailOrder />} />
           {/* <Route path="*" name="Home" element={<PrivateRoute />}>  */}
-          <Route path="*" name="Home" element={<DefaultLayout />} />
+          {/* <Route path="*" name="Home" element={<DefaultLayout />} /> */}
           {/* </Route>  */}
         </Routes>
       </Suspense>

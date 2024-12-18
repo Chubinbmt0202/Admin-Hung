@@ -5,6 +5,7 @@ import {
   CModal,
   CModalHeader,
   CModalTitle,
+  CFormSelect,
   CModalBody,
   CModalFooter,
   CCard,
@@ -33,112 +34,71 @@ import {
   CFormInput,
   CContainer,
 } from '@coreui/react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { db } from '../../../../firebaseConfig'
-import { collection, getDocs, onSnapshot, deleteDoc } from 'firebase/firestore'
 
 const Accordion = () => {
-  const [currentStatus, setCurrentStatus] = useState('Tất cả');
-  const [dataOrder, setDataOrder] = useState([]);
-  const [allOrders, setAllOrders] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [visibleStatus, setVisibleStatus] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchData();
-
-    const unsubscribeRejectOrders = onSnapshot(collection(db, 'reject'), (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          handleRejectAdded(change.doc);
-        }
-      });
-    });
-
-    return () => {
-      unsubscribeRejectOrders();
-    };
-  }, []);
-
-  const handleRejectAdded = async (doc) => {
-    const rejectData = doc.data();
-    const { PK_Id_DonHang, ID_TX, rejectReason } = rejectData;
-    alert(
-      `Đơn hàng '${PK_Id_DonHang}' đã bị từ chối bởi tài xế '${ID_TX}' với lý do là "${rejectReason}"`
-    );
-    try {
-      await deleteDoc(doc.ref);
-      console.log('Document successfully deleted!');
-    } catch (error) {
-      console.error('Error deleting document:', error);
-    }
-    fetchData();
-  };
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get('http://localhost:3001/api/getAllOrders');
-      setDataOrder(res.data);
-      setAllOrders(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDetailOrder = (OrderID) => {
-    navigate(`/base/popovers/${OrderID}`);
-  };
-
-  const handleUpdate = (OrderID) => {
-    alert(`Chỉnh sửa đơn hàng ${OrderID}`);
-  };
-
-  const handleProcessOrder = (OrderID) => {
-    navigate(`/base/tooltips/${OrderID}`);
-  };
-
-  const handleViewStatus = (OrderID) => {
-    setVisibleStatus(true);
-  };
+  const [currentStatus, setCurrentStatus] = useState('Tất cả')
+  const [dataOrder, setDataOrder] = useState([])
+  const [allOrders, setAllOrders] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [visibleStatus, setVisibleStatus] = useState(false)
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
+    setSearchQuery(event.target.value)
+  }
 
   useEffect(() => {
     if (searchQuery.trim() !== '') {
       const filteredData = allOrders.filter(
         (item) =>
           item.TenKH.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.MaDH.toString().toLowerCase().includes(searchQuery.toLowerCase())
-      );
+          item.MaDH.toString().toLowerCase().includes(searchQuery.toLowerCase()),
+      )
 
-      setDataOrder(filteredData);
+      setDataOrder(filteredData)
     } else {
-      setDataOrder(allOrders);
+      setDataOrder(allOrders)
     }
-  }, [searchQuery, allOrders]);
+  }, [searchQuery, allOrders])
 
   useEffect(() => {
-    filterOrdersByStatus();
-  }, [currentStatus, allOrders]);
+    filterOrdersByStatus()
+  }, [currentStatus, allOrders])
 
   const filterOrdersByStatus = () => {
     if (currentStatus === 'Tất cả') {
-      setDataOrder(allOrders);
+      setDataOrder(allOrders)
     } else {
-      const filteredData = allOrders.filter((item) => item.TrangThai === currentStatus);
-      setDataOrder(filteredData);
+      const filteredData = allOrders.filter((item) => item.TrangThai === currentStatus)
+      setDataOrder(filteredData)
     }
-  };
+  }
 
   const formatDate = (dateString) => {
-    if (!dateString) return ' ';
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
+    if (!dateString) return ' '
+    const date = new Date(dateString)
+    return date.toISOString().split('T')[0]
+  }
+
+  const [filters, setFilters] = useState({
+    search: '',
+    departureTime: '',
+    vehicleNumber: '',
+    departureDate: '',
+    seat: '',
+    paymentStatus: '',
+    trip: '',
+    customerName: '',
+    tripName: '',
+  })
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target
+    setFilters({ ...filters, [name]: value })
+  }
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+  }
   return (
     <>
       <div
@@ -149,27 +109,76 @@ const Accordion = () => {
           marginBottom: '20px',
         }}
       >
-        <CCardHeader style={{ marginBottom: '10px' }}>
-          <strong>Danh sách vé xe</strong>
-        </CCardHeader>
+        {' '}
         <CForm className="row g-3">
+          {' '}
           <CCol xs="auto">
-            <CFormLabel htmlFor="inputPassword2" className="visually-hidden">
-              Password
-            </CFormLabel>
+            {' '}
+            <CFormLabel htmlFor="vehicleNumber" className="visually-hidden">
+              {' '}
+              Biển số xe{' '}
+            </CFormLabel>{' '}
             <CFormInput
               type="text"
-              id="inputPassword2"
-              placeholder="Tìm kiếm"
-              onChange={handleSearchChange}
-            />
-          </CCol>
+              id="vehicleNumber"
+              name="vehicleNumber"
+              placeholder="Biển số xe"
+            />{' '}
+          </CCol>{' '}
           <CCol xs="auto">
+            {' '}
+            <CFormLabel htmlFor="departureDate" className="visually-hidden">
+              {' '}
+              Ngày đi{' '}
+            </CFormLabel>{' '}
+            <CFormInput
+              type="date"
+              id="departureDate"
+              name="departureDate"
+              placeholder="Ngày đi"
+            />{' '}
+          </CCol>{' '}
+          <CCol xs="auto">
+            {' '}
+            <CFormLabel htmlFor="paymentStatus" className="visually-hidden">
+              {' '}
+              Trạng thái thanh toán{' '}
+            </CFormLabel>{' '}
+            <CFormSelect id="paymentStatus" name="paymentStatus">
+              {' '}
+              <option value="Đã thanh toán">Đã thanh toán</option>{' '}
+              <option value="Chưa thanh toán">Chưa thanh toán</option>{' '}
+            </CFormSelect>{' '}
+          </CCol>{' '}
+          <CCol xs="auto">
+            {' '}
+            <CFormLabel htmlFor="trip" className="visually-hidden">
+              {' '}
+              Chuyến đi{' '}
+            </CFormLabel>{' '}
+            <CFormInput type="text" id="trip" name="trip" placeholder="Chuyến đi" />{' '}
+          </CCol>{' '}
+          <CCol xs="auto">
+            {' '}
+            <CFormLabel htmlFor="customerName" className="visually-hidden">
+              {' '}
+              Tên khách hàng{' '}
+            </CFormLabel>{' '}
+            <CFormInput
+              type="text"
+              id="customerName"
+              name="customerName"
+              placeholder="Tên khách hàng"
+            />{' '}
+          </CCol>{' '}
+          <CCol xs="auto">
+            {' '}
             <CButton color="primary" type="submit" className="mb-3">
-              Tìm kiếm
-            </CButton>
-          </CCol>
-        </CForm>
+              {' '}
+              Tìm kiếm{' '}
+            </CButton>{' '}
+          </CCol>{' '}
+        </CForm>{' '}
       </div>
       <CRow>
         <CCol xs={12}>
