@@ -57,7 +57,7 @@ const App = () => {
           <Route path="/500" name="Page 500" element={<Page500 />} />
           <Route path="/DetailTuyenXe/:id" name="Chi tiết tuyến xe" element={<DetailOrder />} />
           {/* <Route path="*" name="Home" element={<PrivateRoute />}>  */}
-          {/* <Route path="*" name="Home" element={<DefaultLayout />} /> */}
+          <Route path="*" name="Home" element={<DefaultLayout />} />
           {/* </Route>  */}
         </Routes>
       </Suspense>

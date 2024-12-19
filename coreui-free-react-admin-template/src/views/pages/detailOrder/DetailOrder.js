@@ -1,13 +1,21 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
+import { AppContent, AppSidebar, AppFooter, AppHeader } from '../../../components/index'
+import Progress from '../../base/progress/Progress';
 
 const DetailOrder = () => {
-  alert('Please select a row to view detail')
+
   return (
     <div>
-      <h1>Detail Order</h1>
+      <AppSidebar />
+      <div className="wrapper d-flex flex-column min-vh-100">
+        <AppHeader />
+        <div className="body flex-grow-1">
+          <Progress />
+        </div>
+        <AppFooter />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default DetailOrder
+export default DetailOrder;

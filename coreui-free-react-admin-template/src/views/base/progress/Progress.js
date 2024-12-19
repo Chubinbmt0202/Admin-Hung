@@ -3,221 +3,230 @@ import {
   CButton,
   CCard,
   CCardBody,
+  CCardText,
   CCardHeader,
   CCol,
+  CCardTitle,
+  CCardImage,
   CRow,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CForm,
+  CFormLabel,
+  CFormInput,
 } from '@coreui/react';
 
-const Progress = () => {
-  const [image, setImage] = useState(null);
-  const [maNhanVien, setMaNhanVien] = useState('');
-  const [tenNhanVien, setTenNhanVien] = useState('');
-  const [ngaySinh, setNgaySinh] = useState('');
-  const [soDienThoai, setSoDienThoai] = useState('');
-  const [email, setEmail] = useState('');
-  const [cccd, setCccd] = useState('');
-  const [chucVu, setChucVu] = useState('');
-  const [taiKhoan, setTaiKhoan] = useState('');
-  const [matKhau, setMatKhau] = useState('');
+const TripModal = ({ isOpen, toggle, onSave, trip }) => {
+  const [formData, setFormData] = useState({
+    title: trip ? trip.title : '',
+    licensePlate: trip ? trip.licensePlate : '',
+    time: trip ? trip.time : '',
+    departure: trip ? trip.departure : '',
+    bookedTickets: trip ? trip.bookedTickets : '',
+    remainingTickets: trip ? trip.remainingTickets : '',
+    price: trip ? trip.price : '',
+  });
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setImage(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleUpdate = () => {
-    // Kiểm tra điều kiện trước khi cập nhật
-    if (maNhanVien.trim() === '') {
-      alert('Vui lòng nhập mã nhân viên');
-      return;
-    }
-    if (tenNhanVien.trim() === '') {
-      alert('Vui lòng nhập tên nhân viên');
-      return;
-    }
-    if (ngaySinh.trim() === '') {
-      alert('Vui lòng chọn ngày sinh');
-      return;
-    }
-    if (soDienThoai.trim() === '') {
-      alert('Vui lòng nhập số điện thoại');
-      return;
-    }
-    if (email.trim() === '') {
-      alert('Vui lòng nhập email');
-      return;
-    }
-    if (cccd.trim() === '') {
-      alert('Vui lòng nhập CCCD');
-      return;
-    }
-    if (chucVu.trim() === '') {
-      alert('Vui lòng nhập chức vụ');
-      return;
-    }
-    if (taiKhoan.trim() === '') {
-      alert('Vui lòng nhập tài khoản');
-      return;
-    }
-    if (matKhau.trim() === '') {
-      alert('Vui lòng nhập mật khẩu');
-      return;
-    }
-
-    // Nếu các điều kiện đều đúng, thực hiện cập nhật
-    alert('Cập nhật thông tin thành công!');
-  };
-
-  const handleDelete = () => {
-    // Thực hiện xóa thông tin nhân viên
-    alert('Xóa thông tin nhân viên thành công!');
+  const handleSubmit = () => {
+    onSave(formData);
+    toggle();
   };
 
   return (
-    <CRow>
-      <CCol xs={12} md={6}>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <strong>Cập nhật thông tin nhân viên</strong>
-          </CCardHeader>
-          <CCardBody>
-            <div className="mb-3">
-              <label htmlFor="maNhanVien" className="form-label">Mã nhân viên</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                id="maNhanVien" 
-                placeholder="Nv102312" 
-                value={maNhanVien}
-                onChange={(e) => setMaNhanVien(e.target.value)}
-              />
+    <CModal visible={isOpen} onClose={toggle}>
+      <CModalHeader closeButton>
+        <CModalTitle>{trip ? 'Cập nhật tuyến xe' : 'Thêm tuyến xe'}</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm>
+          <div className="mb-3">
+            <CFormLabel htmlFor="title">Tên tuyến</CFormLabel>
+            <CFormInput
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="licensePlate">Biển số xe</CFormLabel>
+            <CFormInput
+              id="licensePlate"
+              name="licensePlate"
+              value={formData.licensePlate}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="time">Thời gian chạy</CFormLabel>
+            <CFormInput
+              id="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="departure">Nơi đi</CFormLabel>
+            <CFormInput
+              id="departure"
+              name="departure"
+              value={formData.departure}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="bookedTickets">Số lượng vé đã đặt</CFormLabel>
+            <CFormInput
+              id="bookedTickets"
+              name="bookedTickets"
+              type="number"
+              value={formData.bookedTickets}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="remainingTickets">Số lượng vé còn lại</CFormLabel>
+            <CFormInput
+              id="remainingTickets"
+              name="remainingTickets"
+              type="number"
+              value={formData.remainingTickets}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="price">Giá vé</CFormLabel>
+            <CFormInput
+              id="price"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleChange}
+            />
+          </div>
+        </CForm>
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={toggle}>Hủy</CButton>
+        <CButton color="primary" onClick={handleSubmit}>
+          {trip ? 'Cập nhật' : 'Thêm'}
+        </CButton>
+      </CModalFooter>
+    </CModal>
+  );
+};
+
+const Progress = () => {
+  const [trips, setTrips] = useState([
+    {
+      id: 1,
+      title: 'Cẩm lệ - Mdrac',
+      licensePlate: '50B-12345',
+      time: '8:00 - 12:00',
+      departure: 'Hoà vang - Mdrac',
+      bookedTickets: 20,
+      remainingTickets: 4,
+      price: 200000,
+    },
+    {
+      id: 2,
+      title: 'Another Trip',
+      licensePlate: '51C-67890',
+      time: '10:00 - 14:00',
+      departure: 'Hoà vang - Đà Nẵng',
+      bookedTickets: 15,
+      remainingTickets: 10,
+      price: 150000,
+    },
+    // Thêm nhiều chuyến đi hơn nếu cần
+  ]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState(null);
+
+  const handleToggleModal = () => {
+    setModalOpen(!modalOpen);
+  };
+
+  const handleSaveTrip = (trip) => {
+    if (selectedTrip) {
+      // Update existing trip
+      setTrips(trips.map(t => (t.id === selectedTrip.id ? { ...trip, id: selectedTrip.id } : t)));
+    } else {
+      // Add new trip
+      setTrips([...trips, { ...trip, id: trips.length + 1 }]);
+    }
+    setSelectedTrip(null);
+  };
+
+  const handleEditTrip = (trip) => {
+    setSelectedTrip(trip);
+    handleToggleModal();
+  };
+
+  return (
+    <CRow style={{ marginLeft: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <h2>Danh sách chuyến đi trong tuyến : Đà Nẵng - Đăk Lăk</h2>
+        <CButton color="primary" onClick={() => { setSelectedTrip(null); handleToggleModal(); }}>
+          Thêm tuyến đi
+        </CButton>
+      </div>
+      {trips.map((trip) => (
+        <CCard key={trip.id} style={{ width: '24rem', marginTop: '20px' }}>
+          <CCardImage orientation="top" />
+          <CCardBody style={{ textAlign: 'left' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <CCardTitle style={{ marginRight: '12px' }}>{trip.title}</CCardTitle>
+              <CDropdown>
+                <CDropdownToggle size="sm" color="secondary">Tuỳ chọn</CDropdownToggle>
+                <CDropdownMenu>
+                  <CDropdownItem style={{ cursor: 'pointer' }} onClick={() => handleEditTrip(trip)}>Xem chi tiết</CDropdownItem>
+                  <CDropdownItem style={{ cursor: 'pointer' }} onClick={() => handleEditTrip(trip)}>Chỉnh sửa</CDropdownItem>
+                  <CDropdownItem style={{ cursor: 'pointer' }} onClick={() => setTrips(trips.filter(t => t.id !== trip.id))}>Xoá chuyến</CDropdownItem>
+                </CDropdownMenu>
+              </CDropdown>
             </div>
-            <div className="mb-3">
-              <label htmlFor="tenNhanVien" className="form-label">Tên nhân viên</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                id="tenNhanVien" 
-                placeholder="Truong Viet Hoang" 
-                value={tenNhanVien}
-                onChange={(e) => setTenNhanVien(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="ngaySinh" className="form-label">Ngày sinh</label>
-              <input 
-                type="date" 
-                className="form-control" 
-                id="ngaySinh" 
-                value={ngaySinh}
-                onChange={(e) => setNgaySinh(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="soDienThoai" className="form-label">Số điện thoại</label>
-              <input 
-                type="tel" 
-                className="form-control" 
-                id="soDienThoai" 
-                placeholder="Số điện thoại" 
-                value={soDienThoai}
-                onChange={(e) => setSoDienThoai(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">Email</label>
-              <input 
-                type="email" 
-                className="form-control" 
-                id="email" 
-                placeholder="Email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+            <CCardText style={{ marginTop: '20px' }}>
+              Biển số xe: {trip.licensePlate}
+            </CCardText>
+            <CCardText>
+              Thời gian chạy: {trip.time}
+            </CCardText>
+            <CCardText>
+              Nơi đi: {trip.departure}
+            </CCardText>
+            <CCardText>
+              Số luợng vé đã đặt: {trip.bookedTickets}
+            </CCardText>
+            <CCardText>
+              Số luợng vé còn lại: {trip.remainingTickets}
+            </CCardText>
+            <CCardText>
+              Giá vé: {trip.price.toLocaleString()} VND
+            </CCardText>
           </CCardBody>
         </CCard>
-      </CCol>
-      <CCol xs={12} md={6}>
-        <CCard className="mb-4">
-          <CCardBody>
-            <div className="mb-3">
-              <label htmlFor="anhNhanVien" className="form-label">Ảnh nhân viên</label>
-              <input 
-                type="file" 
-                className="form-control" 
-                id="anhNhanVien" 
-                onChange={handleImageChange} 
-              />
-            </div>
-            <div className="mb-3">
-              {image && (
-                <img src={image} alt="Ảnh nhân viên" style={{ maxWidth: '100%', height: 'auto' }} />
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="cccd" className="form-label">CCCD</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                id="cccd" 
-                placeholder="CCCD" 
-                value={cccd}
-                onChange={(e) => setCccd(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="chucVu" className="form-label">Chức vụ</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                id="chucVu" 
-                placeholder="Chức vụ" 
-                value={chucVu}
-                onChange={(e) => setChucVu(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="taiKhoan" className="form-label">Tài khoản</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                id="taiKhoan" 
-                placeholder="Tài khoản" 
-                value={taiKhoan}
-                onChange={(e) => setTaiKhoan(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="matKhau" className="form-label">Mật khẩu</label>
-              <input 
-                type="password" 
-                className="form-control" 
-                id="matKhau" 
-                placeholder="Mật khẩu" 
-                value={matKhau}
-                onChange={(e) => setMatKhau(e.target.value)}
-              />
-            </div>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      {/* Nút cập nhật */}
-      <div className="d-grid mb-3">
-        <CButton color="primary" onClick={handleUpdate}>Cập Nhật</CButton>
-      </div>
-      {/* Nút xóa */}
-      <div className="d-grid mb-3">
-        <CButton color="danger" onClick={handleDelete}>Xóa</CButton>
-      </div>
+      ))}
+      <TripModal
+        isOpen={modalOpen}
+        toggle={handleToggleModal}
+        onSave={handleSaveTrip}
+        trip={selectedTrip}
+      />
     </CRow>
   );
 };
